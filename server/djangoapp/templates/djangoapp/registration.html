@@ -1,11 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <title>Sign Up</title>
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-    <body>
-    <!--Add a registration form here -->
-    </body>
+<body>
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+        <div class="navbar-header">
+              <a class="navbar-brand" href="/djangoapp">Best Cars</a>
+              <a class="navbar-brand" href="/djangoapp/about">About Us</a>
+              <a class="navbar-brand" href="/djangoapp/contact">Contact Us</a>
+        </div>
+    </div>
+    </nav>
+    <br><br>
+    <form action ="{% url 'djangoapp:registration' %}" method="post">
+        <div class="container">
+            {% csrf_token %}
+            <div class="row justify-content-center">
+            <div class="col-md-5">
+            <div class="card">
+                <h2 class="card-title display-4 text-center">Sign Up</h2>
+                <hr style="width:90%;text-align:center;margin-left:5%">
+                <div class="card-body py-md-4">
+                
+                <label for="username"><b>User Name: </b></label>
+                <input type="text" class="form-control" name="username" placeholder="Enter User Name:" required>
+                <br>
+                <label for="firstname"><b>First Name: </b></label>
+                <input type="text" class="form-control" name="firstname" placeholder="Enter First Name:" required>
+                <br>     
+                <label for="lastname"><b>Last Name: </b></label>
+                <input type="text" class="form-control" name="lastname" placeholder="Enter Last Name:" required>
+                <br>
+                <label for="psw"><b>Password: </b></label>
+                <input type="password" class="form-control" name="psw" placeholder="Enter Password" required>
+                <br>
+                {% if message %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                {% endif %}
+                <button class="btn btn-dark" type="submit">Sign Up</button>   
+            </div>
+            </div>
+            </div>
+        </div>
+    </form>
+</body>
 </html>
