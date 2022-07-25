@@ -2,7 +2,10 @@ import requests
 import json
 from .models import CarModel, CarDealer, DealerReview
 from requests.auth import HTTPBasicAuth
-
+from django.conf import settings
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions, EntitiesOptions, KeywordsOptions, ClassificationsOptions
 
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
@@ -37,16 +40,7 @@ def get_request(url, **kwargs):
     except:
         print("Network exception occurred")
 
-    
-
-# Create a `post_request` to make HTTP POST requests
-# e.g., response = requests.post(url, params=kwargs, json=payload)
-
-
 # Create a get_dealers_from_cf method to get dealers from a cloud function
-# def get_dealers_from_cf(url, **kwargs):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a CarDealer object list
 def get_dealers_from_cf(url, **kwargs):
     results = []
     json_result = get_request(url)
@@ -110,7 +104,7 @@ def get_dealer_reviews_from_cf(url, dealerId):
 
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-def analyze_review_sentiments(text):
+def analyze_review_sentiments(dealer_review):
 
     sentiment_result = []
 
@@ -126,16 +120,31 @@ def analyze_review_sentiments(text):
 
     response = natural_language_understanding.analyze(
         text=dealer_review,
+        language = 'en',
         features=Features(
-        sentiment=SentimentOptions(),
-        entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
-        keywords=KeywordsOptions(emotion=True, sentiment=True, limit=2)))
+        sentiment=SentimentOptions()
+        )).get_result()
 
-    sentiment_result = response.result['sentiment']
+    sentiment_result = response['sentiment']
     
     sentiment = sentiment_result['document']['label']
 
     return sentiment
 
+# Create a `post_request` to make HTTP POST requests
+# e.g., response = requests.post(url, params=kwargs, json=payload)
+def post_request(url, json_payload, **kwargs):
+    
+    try:
+        response = requests.post(url, params=kwargs, json=json_payload)
 
-
+    except:
+        # If any error occurs
+        print("Network exception occurred")
+    
+    status_code = response.status_code
+    print("With status {} ".format(status_code))
+    json_data = json.loads(response.text)
+    return json_data
+    
+    

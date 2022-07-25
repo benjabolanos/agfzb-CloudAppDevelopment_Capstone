@@ -27,7 +27,7 @@ DEBUG = True
 
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ["localhost", "bbgbestcars.mybluemix.net"]
+ALLOWED_HOSTS = ["localhost", "bbgbestcars.mybluemix.net","localhost:8000"]
 
 
 # Application definition
@@ -125,3 +125,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
 MEDIA_URL = '/media/'
+
+SENTIMENT_API_KEY='U6BZfkgPemQagaoFfHgndtLMzdPYbkJI1DEvwS0F4r0B'
+SENTIMENT_API_URL='https://api.us-south.natural-language-understanding.watson.cloud.ibm.com/instances/c56c1c5f-50da-4281-a299-b7b8f87c963b'
