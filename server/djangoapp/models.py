@@ -6,8 +6,7 @@ class CarMake(models.Model):
     description = models.CharField(max_length=50)
     
     def __str__(self):
-        return "Name: " + self.name + "," + \
-            "Description: " + self.description
+        return self.name
 
 class CarModel(models.Model):
     CAR_TYPE_CHOICES = (
@@ -25,6 +24,9 @@ class CarModel(models.Model):
     dealer_id = models.IntegerField()
     car_type = models.CharField(max_length=15, choices=CAR_TYPE_CHOICES)
     year = models.DateField(default=now)
+
+    def __str__(self):
+        return car_type
 
 class CarDealer:
 

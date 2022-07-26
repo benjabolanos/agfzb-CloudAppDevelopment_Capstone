@@ -99,7 +99,7 @@ def get_dealer_details(request, dealer_id):
 
         context['dealer_reviews'] = dealer_reviews
 
-        render(request, 'djangoapp/dealer_details.html', context)
+        return render(request, 'djangoapp/dealer_details.html', context)
 
 
 # Create a `add_review` view to submit a review
