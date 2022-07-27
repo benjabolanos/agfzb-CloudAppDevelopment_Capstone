@@ -93,27 +93,29 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     if request.method == "GET":
         context = {}
-        url="https://ba61a290.us-south.apigw.appdomain.cloud/bestcars/api/review"
 
-        dealer_reviews = get_dealer_reviews_from_cf(url, dealerId=dealer_id)
+        dealer_url="https://ba61a290.us-south.apigw.appdomain.cloud/bestcars/api/dealership"
+        review_url="https://ba61a290.us-south.apigw.appdomain.cloud/bestcars/api/review"
+
+        dealer = get_dealer_by_id(dealer_url, dealerId= dealer_id)
+        dealer_reviews = get_dealer_reviews_from_cf(review_url, dealerId=dealer_id)
 
         context['dealer_reviews'] = dealer_reviews
-
+        context['dealer'] = dealer[0]
         return render(request, 'djangoapp/dealer_details.html', context)
 
-
-# Create a `add_review` view to submit a review
 def add_review(request, dealer_id):
     context = {}
 
     user = request.user
     if(user.is_authenticated):
+
+
         if request.method == "GET" :
             dealer_url = "https://ba61a290.us-south.apigw.appdomain.cloud/bestcars/api/dealership"
-            dealer = get_dealer_by_id(dealer_url, dealer_id)
-            context['dealership'] = dealer
+            dealer = get_dealer_by_id(dealer_url, dealerId= dealer_id)
+            context['dealership'] = dealer[0]
             cars = CarModel.objects.all()
-            
             context['cars'] = cars
 
             return render(request, 'djangoapp/add_review.html', context)
@@ -135,6 +137,7 @@ def add_review(request, dealer_id):
                 review["car_make"] = request.POST['car_make']
                 review["car_model"] = request.POST['car_model']
                 review["car_year"] = request.POST['car_year']
+
             else:
                 review["purchase"] = purchase
             
@@ -143,13 +146,9 @@ def add_review(request, dealer_id):
 
             result = post_request(review_url, json_payload, dealer_id=dealer_id)
 
-            print("add_review[views.py]: ", result)
             context['result'] = result
             context['message'] = "Success: Review added."
             return HttpResponseRedirect(reverse(viewname='djangoapp:dealer_details.html', args=(dealer_id, dealer.id)))
     else:
         context['message'] = "Error: User is unauthenticated."
         return redirect(request, 'djangoapp/dealer_details.html', context)
-
-
-
