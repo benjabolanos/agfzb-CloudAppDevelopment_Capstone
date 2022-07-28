@@ -127,14 +127,14 @@ def post_request(url, json_payload, **kwargs):
     
     try:
         response = requests.post(url, params=kwargs, json=json_payload)
+        status_code = response.status_code
+        print("With status {} ".format(status_code))
+        json_data = json.loads(response.text)
+        return json_data
 
     except:
         print("Network exception occurred")
     
-    status_code = response.status_code
-    print("With status {} ".format(status_code))
-    json_data = json.loads(response.text)
-    return json_data
     
 def get_dealer_by_id(url, dealerId):
     result = []
