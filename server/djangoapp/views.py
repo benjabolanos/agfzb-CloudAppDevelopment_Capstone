@@ -129,7 +129,12 @@ def add_review(request, dealer_id):
             review['dealership'] = dealer_id
             review['review'] = request.POST['content']
             review['name'] = user.first_name + ' ' + user.last_name
-            purchase = request.POST['purchasecheck'] == 'on'
+            if 'purchasecheck' in request.POST:
+                purchase = True
+            else: 
+                purchase = False
+            print(purchase, "FIUUUUUUUSKIJAHGDM")
+            
             review['purchase'] = purchase
             
             if purchase:
@@ -138,13 +143,19 @@ def add_review(request, dealer_id):
                 review['purchase_date'] = request.POST['purchasedate']
                 review['car_make'] = car.car_make.name
                 review['car_model'] = car.name
-                review['car_year'] = car.year.strftime("%Y")    
+                review['car_year'] = car.year.strftime("%Y")
+            else:
+                review['purchase_date'] = " "
+                review['car_make'] = " "
+                review['car_model'] = " "
+                review['car_year'] = " "
             
             json_payload = {}
             json_payload['review'] = review
             print(json_payload)
 
             result = post_request(review_url, json_payload, dealer_id=dealer_id)
+            print(result)
             return HttpResponseRedirect(reverse('djangoapp:dealer_details', kwargs={'dealer_id':dealer_id}))
     else:
         context['message'] = "Error: User is unauthenticated."
