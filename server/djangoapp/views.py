@@ -7,6 +7,7 @@ from .restapis import *
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.conf import settings
+from django.urls import reverse
 from datetime import datetime
 import logging
 import json
@@ -128,7 +129,7 @@ def add_review(request, dealer_id):
             review['dealership'] = dealer_id
             review['review'] = request.POST['content']
             review['name'] = user.first_name + ' ' + user.last_name
-            purchase = request.POST['purchasecheck']
+            purchase = request.POST['purchasecheck'] == 'on'
             review['purchase'] = purchase
             
             if purchase:
@@ -137,16 +138,14 @@ def add_review(request, dealer_id):
                 review['purchase_date'] = request.POST['purchasedate']
                 review['car_make'] = car.car_make.name
                 review['car_model'] = car.name
-                review['car_year'] = car.year
+                review['car_year'] = car.year.strftime("%Y")    
             
             json_payload = {}
             json_payload['review'] = review
+            print(json_payload)
 
             result = post_request(review_url, json_payload, dealer_id=dealer_id)
-            print("Wooow")
-            context['result'] = result
-            context['message'] = "Success: Review added."
-            return redirect('djangoapp:dealer_details.html', dealer_id=dealer_id)
+            return HttpResponseRedirect(reverse('djangoapp:dealer_details', kwargs={'dealer_id':dealer_id}))
     else:
         context['message'] = "Error: User is unauthenticated."
         return redirect(request, 'djangoapp/dealer_details.html', context)
